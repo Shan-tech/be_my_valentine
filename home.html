@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>No Escape 😉</title>
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #1d2671, #c33764);
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            background: #fff;
+            padding: 32px;
+            border-radius: 14px;
+            text-align: center;
+            width: 95%;
+            max-width: 520px;
+            position: relative;
+            /* FIXED */
+        }
+
+        .buttons {
+            position: relative;
+            height: 240px;
+            /* BIG movement area */
+            margin-top: -30px;
+            border-radius: 12px;
+        }
+
+        /* Buttons base */
+        button {
+            width: 90px;
+            height: 36px;
+            font-size: 14px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+
+            transition:
+                transform 0.25s cubic-bezier(.34, 1.56, .64, 1),
+                background-color 0.25s ease,
+                left 0.35s ease,
+                top 0.35s ease;
+        }
+
+        /* Yes */
+        #yesBtn {
+            background: #f07bd7;
+            color: white;
+            position: absolute;
+            left: 170px;
+            top: 100px;
+        }
+
+        /* No */
+        #noBtn {
+            background: #6d6e76;
+            color: white;
+            position: absolute;
+            left: 270px;
+            top: 100px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 28px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        #successMsg {
+            font-size: x-large;
+            font-weight: bold;
+            font-family: cursive;
+            color: #f08e8e;
+        }
+
+        canvas {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExNTgzNjVpcTB6M3N0ajQ0b3lxcjh5eWtud2kzZjl3ZGgyc2VjanQwMiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/F6LkzS5hhek3fDKgwb/giphy.gifhttps://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExNTgzNjVpcTB6M3N0ajQ0b3lxcjh5eWtud2kzZjl3ZGgyc2VjanQwMiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/F6LkzS5hhek3fDKgwb/giphy.gif"
+            width="350" height="300" alt="Kitty" />
+        <h2>Will you be my valantine..?</h2>
+
+        <div class="buttons" id="area">
+            <button id="yesBtn">Yes</button>
+            <button id="noBtn">No</button>
+        </div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h2 id="successMsg">🎉 Yeaaaahhhhhhhh!</h2>
+            <p>You are mine! 😄</p>
+            <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeW45dmxkZmR3MXByM2hqenlyOTRoeGI4bTY4N2x5NWVyZ213ZjJ2MiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Trox0hAr5EVGP58HCD/giphy.gif"
+                width="420" alt="Kitty" />
+        </div>
+    </div>
+
+    <canvas id="confetti"></canvas>
+
+    <script>
+        const noBtn = document.getElementById("noBtn");
+        const yesBtn = document.getElementById("yesBtn");
+        const area = document.getElementById("area");
+        const modal = document.getElementById("modal");
+        const canvas = document.getElementById("confetti");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        /* Sounds */
+        const moveSound = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-game-click-1114.mp3");
+        const winSound = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3");
+
+        /* Helpers */
+        function clamp(v, min, max) {
+            return Math.max(min, Math.min(max, v));
+        }
+
+        function center(el) {
+            const r = el.getBoundingClientRect();
+            return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+        }
+
+        /* Smart avoidance */
+        function moveNoSmart(cx, cy) {
+            const areaRect = area.getBoundingClientRect();
+            const btnRect = noBtn.getBoundingClientRect();
+            const c = center(noBtn);
+
+            const dx = c.x - cx;
+            const dy = c.y - cy;
+            const dist = Math.hypot(dx, dy);
+
+            const DANGER_RADIUS = 120;
+
+            if (dist < DANGER_RADIUS) {
+                const escape = 260;
+
+                let x = noBtn.offsetLeft + (dx / dist) * escape;
+                let y = noBtn.offsetTop + (dy / dist) * escape;
+
+                x = clamp(x, 0, areaRect.width - btnRect.width);
+                y = clamp(y, 0, areaRect.height - btnRect.height);
+
+                noBtn.style.left = x + "px";
+                noBtn.style.top = y + "px";
+
+                /* Smooth size illusion */
+                noBtn.style.transform = "scale(0.6)";
+                yesBtn.style.transform = "scale(1.25)";
+                noBtn.style.background = "#6d6e7680";
+                yesBtn.style.background = "#f07bd7a6";
+
+                moveSound.currentTime = 0;
+                moveSound.play().catch(() => { });
+            }
+        }
+
+        /* Desktop */
+        area.addEventListener("mousemove", e => {
+            moveNoSmart(e.clientX, e.clientY);
+        });
+
+        /* Mobile */
+        area.addEventListener("touchmove", e => {
+            const t = e.touches[0];
+            moveNoSmart(t.clientX, t.clientY);
+        });
+
+        /* Reset sizes */
+        area.addEventListener("mouseleave", resetButtons);
+        area.addEventListener("touchend", resetButtons);
+
+        function resetButtons() {
+            noBtn.style.transform = "scale(1)";
+            yesBtn.style.transform = "scale(1)";
+            noBtn.style.background = "#6d6e76";
+            yesBtn.style.background = "#f07bd7";
+        }
+
+        function hoverYes() {
+            yesBtn.style.transform = "scale(1)";
+            yesBtn.style.background = "#f07bd7";
+        }
+
+        /* Confetti */
+        let particles = [];
+        function launchConfetti() {
+            particles = Array.from({ length: 140 }, () => ({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                r: Math.random() * 5 + 3,
+                dx: Math.random() * 3 - 1.5,
+                dy: Math.random() * 4 + 2,
+                c: `hsl(${Math.random() * 360},100%,50%)`
+            }));
+            animate();
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.fillStyle = p.c;
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fill();
+                p.x += p.dx;
+                p.y += p.dy;
+            });
+            requestAnimationFrame(animate);
+        }
+
+        /* Yes click */
+        yesBtn.addEventListener("click", () => {
+            modal.style.display = "flex";
+            winSound.play().catch(() => { });
+            launchConfetti();
+        });
+
+        yesBtn.addEventListener("pointerenter", () => {
+            yesBtn.style.transform = "scale(1.15)";
+            yesBtn.style.background = "#ff9de2";
+        });
+
+        yesBtn.addEventListener("pointerleave", () => {
+            yesBtn.style.transform = "scale(1)";
+            yesBtn.style.background = "#f07bd7";
+        });
+
+    </script>
+
+</body>
+
+</html>
