@@ -4,7 +4,7 @@ const area = document.getElementById("area");
 const modal = document.getElementById("modal");
 const canvas = document.getElementById("confetti");
 const ctx = canvas.getContext("2d");
-let noBtnClickCount = 0;
+let noBtnClickCount = 1;
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -110,6 +110,7 @@ function animate() {
         p.y += p.dy;
     });
     requestAnimationFrame(animate);
+
 }
 
 /* Yes click */
@@ -120,7 +121,11 @@ noBtn.addEventListener("click", () => {
     noBtnClickCount++;
     if (noBtnClickCount > 2) {
         modal.style.display = "flex";
-        winSound.play().catch(() => { });
+        document.getElementById("subTxt").innerText = "";
+        document.getElementById("successMsg").innerText = "😄";
+        console.log("No");
+        
+        closeModal();
     }
 });
 
@@ -128,6 +133,7 @@ yesBtn.addEventListener("click", () => {
     modal.style.display = "flex";
     winSound.play().catch(() => { });
     launchConfetti();
+   closeModal();
 });
 
 yesBtn.addEventListener("pointerenter", () => {
@@ -139,3 +145,11 @@ yesBtn.addEventListener("pointerleave", () => {
     yesBtn.style.transform = "scale(1)";
     yesBtn.style.background = "#f07bd7";
 });
+
+
+function closeModal() {
+     setTimeout(function () {
+        location.reload();
+    }, 4000);
+    
+}
