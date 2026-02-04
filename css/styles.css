@@ -1,0 +1,92 @@
+body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #1d2671, #c33764);
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            background: #fff;
+            padding: 32px;
+            border-radius: 14px;
+            text-align: center;
+            width: 95%;
+            max-width: 520px;
+            position: relative;
+            /* FIXED */
+        }
+
+        .buttons {
+            position: relative;
+            height: 240px;
+            /* BIG movement area */
+            margin-top: -30px;
+            border-radius: 12px;
+        }
+
+        /* Buttons base */
+        button {
+            width: 90px;
+            height: 36px;
+            font-size: 14px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+
+            transition:
+                transform 0.25s cubic-bezier(.34, 1.56, .64, 1),
+                background-color 0.25s ease,
+                left 0.35s ease,
+                top 0.35s ease;
+        }
+
+        /* Yes */
+        #yesBtn {
+            background: #f07bd7;
+            color: white;
+            position: absolute;
+            left: 170px;
+            top: 100px;
+        }
+
+        /* No */
+        #noBtn {
+            background: #6d6e76;
+            color: white;
+            position: absolute;
+            left: 270px;
+            top: 100px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 28px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        #successMsg {
+            font-size: x-large;
+            font-weight: bold;
+            font-family: cursive;
+            color: #f08e8e;
+        }
+
+        canvas {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+        }
