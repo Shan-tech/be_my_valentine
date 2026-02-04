@@ -96,3 +96,11 @@ canvas {
     inset: 0;
     pointer-events: none;
 }
+
+@media screen and (max-width: 600px) {
+  body {
+    background-color: red;
+    color: #1d2671;
+  }
+
+}

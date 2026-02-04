@@ -4,10 +4,8 @@ const area = document.getElementById("area");
 const modal = document.getElementById("modal");
 const canvas = document.getElementById("confetti");
 const ctx = canvas.getContext("2d");
-let flag = 0;
-function setflag() {
-    flag = 1;
-}
+let noBtnClickCount = 0;
+
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
@@ -118,11 +116,11 @@ function animate() {
 const imgContainer = document.getElementById("successImg");
 
 noBtn.addEventListener("click", () => {
-    if(flag === 0) {
-    modal.style.display = "flex";
     imgContainer.src = "/imgs/img2" + ".jpg";
-    winSound.play().catch(() => { });
-    launchConfetti();
+    noBtnClickCount++;
+    if (noBtnClickCount > 2) {
+        modal.style.display = "flex";
+        winSound.play().catch(() => { });
     }
 });
 
@@ -141,7 +139,3 @@ yesBtn.addEventListener("pointerleave", () => {
     yesBtn.style.transform = "scale(1)";
     yesBtn.style.background = "#f07bd7";
 });
-
-const images = ["0", "0", "0"];
-const randomIndex = Math.floor(Math.random() * images.length);
-imgContainer.src = "/imgs/img" + images[randomIndex] + ".jpg";
